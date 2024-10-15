@@ -42,7 +42,7 @@ def increase_pc_volume(step=0.1):
 # Функция для отключения звука (мут)
 def mute_pc_volume():
     volume = get_volume_interface()
-    volume.SetMasterVolumeLevelScalar(0.0, None)  # Устанавливаем громкость на 0%
+    volume.SetMasterVolumeLevelScalar(0.0, None)  # громкость на 0%
     return "Звук отключен."
 
 # Функция для уменьшения громкости
@@ -57,7 +57,7 @@ def decrease_pc_volume(step=0.1):
 def restart_pc():
     """Перезагружает компьютер принудительно."""
     try:
-        subprocess.call(["shutdown", "/r", "/f", "/t", "0"])  # Добавлено /f для принудительного завершения
+        subprocess.call(["shutdown", "/r", "/f", "/t", "0"])  
         return "Компьютер перезагружается..."
     except Exception as e:
         return f"Ошибка при перезагрузке компьютера: {e}"
@@ -66,7 +66,7 @@ def restart_pc():
 def shutdown_pc():
     """Выключает компьютер принудительно."""
     try:
-        subprocess.call(["shutdown", "/s", "/f", "/t", "0"])  # Добавлено /f для принудительного завершения
+        subprocess.call(["shutdown", "/s", "/f", "/t", "0"])  
         return "Компьютер выключается..."
     except Exception as e:
         return f"Ошибка при выключении компьютера: {e}"
@@ -82,7 +82,7 @@ def schedule_shutdown(target_time):
             shutdown_time += timedelta(days=1)
 
         seconds = (shutdown_time - now).total_seconds()
-        subprocess.call(["shutdown", "/s", "/t", str(int(seconds))])  # Запланированное выключение
+        subprocess.call(["shutdown", "/s", "/t", str(int(seconds))])  
         return f"Компьютер будет выключен в {shutdown_time.strftime('%H:%M')}."
     except Exception as e:
         return f"Ошибка при планировании выключения: {e}"
