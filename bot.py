@@ -5,7 +5,7 @@ import datetime
 import time
 import subprocess
 import os
-import ctypes  # Добавлено для уведомлений
+import ctypes  
 
 from comands import shutdown_pc, schedule_shutdown, restart_pc, increase_pc_volume, decrease_pc_volume, mute_pc_volume
 from spotify import play_music, pause_music, skip_track, previous_track
@@ -33,9 +33,9 @@ is_rebooting = False
 is_shutting_down = False
 current_volume = 100
 current_spotify_volume = 100
-scheduled_time = None  # Переменная для хранения запланированного времени
-is_muted = False  # Переменная для хранения состояния "мутирования" звука
-previous_volume = current_volume  # Переменная для хранения предыдущего уровня громкости
+scheduled_time = None  
+is_muted = False  
+previous_volume = current_volume  
 
 # Функция для отображения уведомления
 def show_notification():
@@ -141,7 +141,7 @@ def update_volume_markup(chat_id):
 def cancel_timer():
     """Отменяет запланированное действие (выключение или перезагрузку)."""
     try:
-        subprocess.call(["shutdown", "/a"])  # Отменяем запланированное действие
+        subprocess.call(["shutdown", "/a"]) 
         return "Таймер отменен."
     except Exception as e:
         return f"Ошибка при отмене таймера: {e}"
@@ -166,12 +166,12 @@ def handle_message(message):
         elif text == '🔈':
             update_volume_markup(message.chat.id)
 
-        elif text == f"🔈{current_volume}%":  # Проверяем нажатие на кнопку с текущей громкостью
+        elif text == f"🔈{current_volume}%":  
 
             if not is_muted:
                 # Сохраняем текущую громкость и отключаем звук
                 previous_volume = current_volume
-                mute_pc_volume()  # Отключаем звук
+                mute_pc_volume()  
                 current_volume = 0
                 is_muted = True
                 bot.send_message(message.chat.id, "Звук выключен.")
@@ -187,7 +187,7 @@ def handle_message(message):
 
         elif text == '➕🔟':
             if is_muted:
-                is_muted = False  # Если звук был выключен, включаем его
+                is_muted = False  
             current_volume = min(current_volume + 10, 100)
             increase_pc_volume()
             bot.send_message(message.chat.id, "Громкость увеличена на 10%.")
@@ -196,7 +196,7 @@ def handle_message(message):
 
         elif text == '➖🔟':
             if is_muted:
-                is_muted = False  # Если звук был выключен, включаем его
+                is_muted = False  
             current_volume = max(current_volume - 10, 0)
             decrease_pc_volume()
             bot.send_message(message.chat.id, "Громкость уменьшена на 10%.")
@@ -259,7 +259,7 @@ def handle_message(message):
         elif text == 'удалить таймер':
             if scheduled_time:
                 bot.send_message(message.chat.id, cancel_timer())
-                scheduled_time = None  # Сбрасываем запланированное время
+                scheduled_time = None  
             else:
                 bot.send_message(message.chat.id, "Нет запланированного таймера для удаления.")
 
@@ -285,10 +285,10 @@ def handle_message(message):
 
 # Обработчик для планирования выключения
 def handle_schedule_shutdown(message):
-    global scheduled_time  # Глобальная переменная для доступа
+    global scheduled_time  
     target_time = message.text
     if validate_time_format(target_time):
-        scheduled_time = target_time  # Сохраняем запланированное время
+        scheduled_time = target_time  
         result = schedule_shutdown(target_time)
         bot.send_message(message.chat.id, result)
     else:
@@ -297,5 +297,5 @@ def handle_schedule_shutdown(message):
 
 # Запуск бота с бесконечным polling
 if __name__ == "__main__":
-    show_notification()  # Уведомление о запуске
-    bot.infinity_polling(none_stop=True)  # Запуск бота
+    show_notification()  
+    bot.infinity_polling(none_stop=True)  
