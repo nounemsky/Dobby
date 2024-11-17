@@ -12,22 +12,19 @@ from spotify import play_music, pause_music, skip_track, previous_track
 
 bot = telebot.TeleBot(config.TOKEN)
 
-# Папка, в которую будут сохраняться файлы
+# Папка
 SAVE_FOLDER = "ПУТЬ К ПАПКЕ"
 
-# Проверяем наличие папки и создаем, если ее нет
 if not os.path.exists(SAVE_FOLDER):
     os.makedirs(SAVE_FOLDER)
 
 def validate_time_format(time_str):
-    """Проверяет, является ли строка корректным временем в формате HH:MM."""
     try:
-        datetime.datetime.strptime(time_str, "%H:%M")  # Проверяем формат
+        datetime.datetime.strptime(time_str, "%H:%M")
         return True
     except ValueError:
         return False
 
-# Хранение состояния выполнения команд
 is_playing = False
 is_rebooting = False
 is_shutting_down = False
@@ -37,11 +34,9 @@ scheduled_time = None
 is_muted = False  
 previous_volume = current_volume  
 
-# Функция для отображения уведомления
 def show_notification():
     ctypes.windll.user32.MessageBoxW(0, "Dobby запущен!", "Уведомление", 1)
 
-# Обработчик команды /start
 @bot.message_handler(commands=['start'])
 def welcome(message):
     if message.chat.id == config.owner_id:
@@ -79,23 +74,21 @@ def handle_files(message):
             with open(save_path, 'wb') as new_file:
                 new_file.write(downloaded_file)
 
-            bot.send_message(message.chat.id, f"Файл успешно сохранен в C:\\Yatoshi\\Telegram Files") # ПОМЕНЯТЬ НА СВОЙ
+            bot.send_message(message.chat.id, f"Файл успешно сохранен в C:\\Telegram Files") # ПОМЕНЯТЬ НА СВОЙ
         except Exception as e:
             bot.send_message(message.chat.id, f"Ошибка при загрузке файла: {e}")
     else:
-        bot.send_message(message.chat.id, "У вас нет доступа для загрузки файлов.")
+        bot.send_message(message.chat.id, "У вас нет доступа.")
 
 def main_menu(chat_id):
     ACTION_PROMPT = "Выберите действие:"
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     item1 = types.KeyboardButton("🖥")
     item2 = types.KeyboardButton("Spotify")
-    # Убрали кнопку для погоды
 
     markup.add(item1, item2)
     bot.send_message(chat_id, ACTION_PROMPT, reply_markup=markup)
 
-# Функция для обновления кнопок компьютера
 def update_computer_markup(chat_id):
     BACK_BUTTON_TEXT = "Назад"
     computer_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -109,7 +102,6 @@ def update_computer_markup(chat_id):
 
     bot.send_message(chat_id, "Выберите действие:", reply_markup=computer_markup)
 
-# Функция для обновления кнопок управления Spotify
 def update_spotify_markup(chat_id):
     global is_playing
     spotify_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
@@ -124,7 +116,6 @@ def update_spotify_markup(chat_id):
 
     bot.send_message(chat_id, "Spotify:", reply_markup=spotify_markup)
 
-# Функция для обновления кнопок регулировки громкости
 def update_volume_markup(chat_id):
     volume_markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     plus_button = types.KeyboardButton("➕🔟")
@@ -139,7 +130,6 @@ def update_volume_markup(chat_id):
 
 
 def cancel_timer():
-    """Отменяет запланированное действие (выключение или перезагрузку)."""
     try:
         subprocess.call(["shutdown", "/a"]) 
         return "Таймер отменен."
@@ -169,20 +159,17 @@ def handle_message(message):
         elif text == f"🔈{current_volume}%":  
 
             if not is_muted:
-                # Сохраняем текущую громкость и отключаем звук
                 previous_volume = current_volume
                 mute_pc_volume()  
                 current_volume = 0
                 is_muted = True
                 bot.send_message(message.chat.id, "Звук выключен.")
             else:
-                # Восстанавливаем предыдущую громкость
                 current_volume = previous_volume
-                increase_pc_volume(current_volume / 100)  # Восстанавливаем громкость
+                increase_pc_volume(current_volume / 100)
                 is_muted = False
                 bot.send_message(message.chat.id, f"Громкость восстановлена на {current_volume}%.")
-
-            # Обновляем клавиатуру с текущим состоянием громкости
+                
             update_volume_markup(message.chat.id)
 
         elif text == '➕🔟':
@@ -283,7 +270,6 @@ def handle_message(message):
         else:
             bot.send_message(message.chat.id, "Команда не распознана. Попробуйте снова.")
 
-# Обработчик для планирования выключения
 def handle_schedule_shutdown(message):
     global scheduled_time  
     target_time = message.text
@@ -295,7 +281,6 @@ def handle_schedule_shutdown(message):
         bot.send_message(message.chat.id, "Пожалуйста, введите время в правильном формате HH:MM.")
 
 
-# Запуск бота с бесконечным polling
 if __name__ == "__main__":
     show_notification()  
     bot.infinity_polling(none_stop=True)  
