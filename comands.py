@@ -37,14 +37,14 @@ def increase_pc_volume(step=0.1):
 # мут
 def mute_pc_volume():
     volume = get_volume_interface()
-    volume.SetMasterVolumeLevelScalar(0.0, None)  # громкость на 0%
+    volume.SetMasterVolumeLevelScalar(0.0, None) 
     return "Звук отключен."
 
 # уменьшения громкости
 def decrease_pc_volume(step=0.1):
     volume = get_volume_interface()
     current_volume = volume.GetMasterVolumeLevelScalar()
-    new_volume = max(current_volume - step, 0.0)  # Ограничение до 0%
+    new_volume = max(current_volume - step, 0.0)  
     volume.SetMasterVolumeLevelScalar(new_volume, None)
     return f"Громкость уменьшена до {int(new_volume * 100)}%"
 
